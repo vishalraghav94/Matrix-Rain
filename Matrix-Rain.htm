@@ -1,0 +1,88 @@
+<html>
+<head>
+
+<style id="webmakerstyle">
+
+</style>
+</head>
+<body>
+
+
+<script>
+function startUp() {
+    var symbolSize = 10;
+    var gameArea = {
+        canvas: document.createElement('canvas'),
+        start: function () {
+            this.canvas.width = window.innerWidth;
+            this.canvas.height = window.innerHeight;
+            this.canvas.style.backgroundColor = 'black';
+            this.context = this.canvas.getContext('2d');
+            document.body.appendChild(this.canvas);
+            this.frameNo = 0;
+            this.interval = setInterval(updateGameArea, 1000 / 60);
+        },
+        clear: function () {
+            this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        }
+    };
+    gameArea.start();
+    function Symbol(x, y, speed, first) {
+        this.x = x;
+        this.y = y;
+        this.speed = speed;
+        this.first = first;
+        this.setRandomSymbol = function () {
+            this.value = String.fromCharCode(12449 + Math.round(Math.random() * (94 - 0 + 1)));
+        };
+        this.render = function () {
+            if (this.y >= window.innerHeight)
+                this.y = 0;
+            else
+                this.y += this.speed;
+            var ctx = gameArea.context;
+            if (this.first)
+                ctx.fillStyle = 'lightgreen';
+            else
+                ctx.fillStyle = 'green';
+            ctx.font = '20px Verdana';
+            ctx.fillText(this.value, this.x, this.y);
+            if (gameArea.frameNo % 5 == 0)
+                this.setRandomSymbol();
+        };
+    }
+    var symbols = [];
+    var y;
+    var x = 0;
+    var speed;
+    var first;
+    var gap;
+    for (var i = 0; i <= window.innerWidth / symbolSize; i++) {
+        y = Math.floor(Math.random() * (150 - 0 + 1) + 0);
+        speed = Math.floor(Math.random() * (20 - 5 + 1) + 5);
+        gap = Math.floor(Math.random() * (25 - 10 + 1) + 10);
+        first = Math.round(Math.random() * (4 - 0 + 1) + 0) == 1;
+        for (var j = 0; j <= 10; j++) {
+            var symbol = new Symbol(x, y, speed, first);
+            y -= symbolSize + gap;
+            symbols.push(symbol);
+            first = false;
+        }
+        x += symbolSize + 3;
+    }
+    for (i = 0; i < symbols.length; i++)
+        symbols[i].setRandomSymbol();
+    function updateGameArea() {
+        gameArea.frameNo++;
+        gameArea.clear();
+        for (i = 0; i < symbols.length; i++)
+            symbols[i].render();
+    }
+}
+window.onload = function () {
+    startUp();
+};
+//# sourceURL=userscript.js
+</script>
+</body>
+</html>
